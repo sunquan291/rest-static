@@ -76,7 +76,7 @@ public class RestStaticRecordSenior {
         return infos;
     }
 
-    public static StaticRecordInfo getRecordInfos(long index) {
+    public static StaticRecordInfo getRecordInfo(long index) {
         StaticRecordInfo info = Arrays.stream(recordInfos).filter(p -> p.getIndex() == index).findFirst().orElse(null);
         if (info != null && info.getException() != null) {
             StaticRecordInfo newInfo = new StaticRecordInfo(info);

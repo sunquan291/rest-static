@@ -33,6 +33,6 @@ public class RestStaticInfosControl {
 
     @GetMapping("list-by/{index}")
     public StaticRecordInfo showRecordInfos(@PathVariable("index") long index) {
-        return RestStaticRecordSenior.getRecordInfos(index);
+        return RestStaticRecordSenior.getRecordInfo(index);
     }
 }
