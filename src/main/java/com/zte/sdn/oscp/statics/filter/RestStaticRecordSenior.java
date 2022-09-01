@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
  **/
 public class RestStaticRecordSenior {
     static final int MAXIMUM_CAPACITY = 1 << 30;
-    private static AtomicLong INDEX = new AtomicLong(0);
+    private static AtomicLong INDEX = new AtomicLong(-1);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("YY-MM-dd HH:mm:ss");
 
     private static int COUNT;
@@ -50,12 +50,13 @@ public class RestStaticRecordSenior {
     }
 
     public static StaticRecordInfo addRecord(LocalDateTime localDateTime, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Exception e) {
-        current_index = (int) (INDEX.get() & (COUNT - 1));
+        long currentIndex = INDEX.getAndIncrement();
+        current_index = (int) (currentIndex & (COUNT - 1));
         //build static record info
         long costInMs = Duration.between(localDateTime, LocalDateTime.now()).toMillis();
         //内存重复使用
         StaticRecordInfo recordInfo = recordInfos[current_index];
-        recordInfo.setIndex(INDEX.get());
+        recordInfo.setIndex(currentIndex);
         recordInfo.setInvokeTime(localDateTime.format(FORMATTER));
         recordInfo.setFrom(servletRequest.getRemoteAddr() + ":" + servletRequest.getRemotePort());
         recordInfo.setMethod(servletRequest.getMethod());
@@ -64,8 +65,6 @@ public class RestStaticRecordSenior {
         recordInfo.setResultCode(servletResponse.getStatus());
         recordInfo.setException(e);
         recordInfo.setCostInMs(costInMs);
-
-        INDEX.getAndIncrement();
         return recordInfo;
     }
 
