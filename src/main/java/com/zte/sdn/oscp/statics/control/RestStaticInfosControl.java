@@ -1,15 +1,14 @@
 package com.zte.sdn.oscp.statics.control;
 
-import java.util.List;
-
+import com.zte.sdn.oscp.statics.config.RestStaticsProperties;
+import com.zte.sdn.oscp.statics.filter.RestStaticRecordSenior;
+import com.zte.sdn.oscp.statics.filter.StaticRecordInfo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zte.sdn.oscp.statics.config.RestStaticsProperties;
-import com.zte.sdn.oscp.statics.filter.RestStaticRecordSenior;
-import com.zte.sdn.oscp.statics.filter.StaticRecordInfo;
+import java.util.List;
 
 /**
  * @Author 10184538
@@ -34,5 +33,10 @@ public class RestStaticInfosControl {
     @GetMapping("list-by/{index}")
     public StaticRecordInfo showRecordInfos(@PathVariable("index") long index) {
         return RestStaticRecordSenior.getRecordInfo(index);
+    }
+
+    @GetMapping("reset")
+    public void rest() {
+        RestStaticRecordSenior.rest();
     }
 }
