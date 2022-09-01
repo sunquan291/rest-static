@@ -1,5 +1,7 @@
 package com.zte.sdn.oscp.statics.filter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Duration;
@@ -9,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Author 10184538
@@ -49,7 +49,7 @@ public class RestStaticRecordSenior {
         return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
     }
 
-    public static void addRecord(LocalDateTime localDateTime, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Exception e) {
+    public static StaticRecordInfo addRecord(LocalDateTime localDateTime, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Exception e) {
         current_index = (int) (INDEX.get() & (COUNT - 1));
         //build static record info
         long costInMs = Duration.between(localDateTime, LocalDateTime.now()).toMillis();
@@ -66,6 +66,7 @@ public class RestStaticRecordSenior {
         recordInfo.setCostInMs(costInMs);
 
         INDEX.getAndIncrement();
+        return recordInfo;
     }
 
     public static List<StaticRecordInfo> getRecordInfos() {

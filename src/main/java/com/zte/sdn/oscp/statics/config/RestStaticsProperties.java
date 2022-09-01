@@ -1,8 +1,8 @@
 package com.zte.sdn.oscp.statics.config;
 
-import java.util.List;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 @ConfigurationProperties(prefix = "rest.statics")
 public class RestStaticsProperties {
@@ -14,6 +14,10 @@ public class RestStaticsProperties {
      * 统计条目数  2的指数
      */
     private int count = 1024;
+    /**
+     * 慢执行时间
+     */
+    private int longRestTime = -1;
 
     public List<String> getSkipUrls() {
         return skipUrls;
@@ -29,5 +33,13 @@ public class RestStaticsProperties {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public int getLongRestTime() {
+        return longRestTime;
+    }
+
+    public void setLongRestTime(int longRestTime) {
+        this.longRestTime = longRestTime;
     }
 }

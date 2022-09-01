@@ -1,24 +1,18 @@
 package com.zte.sdn.oscp.statics.filter;
 
+import com.zte.sdn.oscp.statics.config.RestStaticsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.zte.sdn.oscp.statics.config.RestStaticsProperties;
 
 /**
  * @Author 10184538
@@ -60,12 +54,18 @@ public class RestLogFilter implements Filter {
 
     private void doRestLogFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         LocalDateTime localDateTime = LocalDateTime.now();
+        StaticRecordInfo recordInfo = null;
         try {
             filterChain.doFilter(servletRequest, servletResponse);
-            RestStaticRecordSenior.addRecord(localDateTime, servletRequest, servletResponse,null);
+            recordInfo = RestStaticRecordSenior.addRecord(localDateTime, servletRequest, servletResponse, null);
         } catch (Exception e) {
-            RestStaticRecordSenior.addRecord(localDateTime, servletRequest,servletResponse, e);
+            recordInfo = RestStaticRecordSenior.addRecord(localDateTime, servletRequest, servletResponse, e);
             throw e;
+        } finally {
+            int longRestTime = restStaticsProperties.getLongRestTime();
+            if (longRestTime != -1 && longRestTime >= recordInfo.getCostInMs()) {
+                LOG.info("LongRestTime exist:{}ms,index:{},url:{}", recordInfo.getCostInMs(), recordInfo.getIndex(), recordInfo.getPath());
+            }
         }
     }
 }
