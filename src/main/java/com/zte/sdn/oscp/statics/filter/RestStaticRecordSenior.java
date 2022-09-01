@@ -92,6 +92,18 @@ public class RestStaticRecordSenior {
         return infos;
     }
 
+    public static List<StaticRecordInfo> getErrorRecordInfo() {
+        List<StaticRecordInfo> infos = new ArrayList<>(COUNT);
+        for (int i = 1; i <= COUNT; i++) {
+            StaticRecordInfo recordInfo = recordInfos[(current_index + i) & (COUNT - 1)];
+            if (recordInfo.getIndex() != -1 && recordInfo.getException() != null) {
+                infos.add(recordInfo);
+            }
+        }
+        return infos;
+
+    }
+
     public static StaticRecordInfo getRecordInfo(long index) {
         StaticRecordInfo info = Arrays.stream(recordInfos).filter(p -> p.getIndex() == index).findFirst().orElse(null);
         if (info != null && info.getException() != null) {
@@ -119,5 +131,6 @@ public class RestStaticRecordSenior {
         }
         lock.compareAndSet(true, false);
     }
+
 
 }
