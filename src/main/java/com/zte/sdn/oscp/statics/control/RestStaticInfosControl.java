@@ -39,9 +39,4 @@ public class RestStaticInfosControl {
     public List<StaticRecordInfo> showErrorRecordInfos() {
         return RestStaticRecordSenior.getErrorRecordInfo();
     }
-
-    @GetMapping("reset")
-    public void rest() {
-        RestStaticRecordSenior.rest();
-    }
 }

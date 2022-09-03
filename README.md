@@ -68,6 +68,3 @@ rest:
 - http://ip:port/rest-statics/list-error
 
   查询REST调用报错的所有记录
-- http://ip:port/rest-statics/rest
-
-  重置记录功能

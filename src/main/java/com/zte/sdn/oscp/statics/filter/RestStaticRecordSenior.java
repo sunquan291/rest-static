@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,8 +27,6 @@ public class RestStaticRecordSenior {
     private static StaticRecordInfo[] recordInfos;
 
     private static int current_index = -1;
-
-    private static AtomicBoolean lock = new AtomicBoolean(false);
 
     public static void init(int count) {
 
@@ -55,19 +52,13 @@ public class RestStaticRecordSenior {
 
     public static StaticRecordInfo addRecord(LocalDateTime localDateTime, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Exception e) {
 
-        while (!lock.compareAndSet(false, true)) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(10);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
         long currentIndex = INDEX.getAndIncrement();
         current_index = (int) (currentIndex & (COUNT - 1));
         //build static record info
         long costInMs = Duration.between(localDateTime, LocalDateTime.now()).toMillis();
         //内存重复使用
         StaticRecordInfo recordInfo = recordInfos[current_index];
+        //double check
         recordInfo.setIndex(currentIndex);
         recordInfo.setInvokeTime(localDateTime.format(FORMATTER));
         recordInfo.setFrom(servletRequest.getRemoteAddr() + ":" + servletRequest.getRemotePort());
@@ -77,7 +68,6 @@ public class RestStaticRecordSenior {
         recordInfo.setResultCode(servletResponse.getStatus());
         recordInfo.setException(e);
         recordInfo.setCostInMs(costInMs);
-        lock.compareAndSet(true, false);
         return recordInfo;
     }
 
@@ -115,22 +105,4 @@ public class RestStaticRecordSenior {
         }
         return info;
     }
-
-    public static void rest() {
-        while (!lock.compareAndSet(false, true)) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(10);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        current_index = -1;
-        INDEX = new AtomicLong(-1);
-        for (StaticRecordInfo recordInfo : recordInfos) {
-            recordInfo.setIndex(-1);
-        }
-        lock.compareAndSet(true, false);
-    }
-
-
 }

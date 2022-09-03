@@ -20,8 +20,9 @@ import java.util.stream.Collectors;
  **/
 public class RestLogFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(RestLogFilter.class);
+
     private RestStaticsProperties restStaticsProperties;
-    private List<Pattern> skipUrsPattern;
+    private List<Pattern> skipUrsPattern = new ArrayList<>(10);
 
     public RestLogFilter(RestStaticsProperties restStaticsProperties) {
         this.restStaticsProperties = restStaticsProperties;
@@ -29,13 +30,11 @@ public class RestLogFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        List<String> skipUrls = restStaticsProperties.getSkipUrls();
-        if (skipUrls == null) {
-            skipUrsPattern = new ArrayList<>(0);
-        } else {
-            skipUrsPattern = skipUrls.stream().map(Pattern::compile).collect(Collectors.toList());
-        }
         skipUrsPattern.add(Pattern.compile("/rest-statics/*"));
+        List<String> skipUrls = restStaticsProperties.getSkipUrls();
+        if (skipUrls != null) {
+            skipUrsPattern.addAll(skipUrls.stream().map(Pattern::compile).collect(Collectors.toList()));
+        }
         int count = restStaticsProperties.getCount();
         RestStaticRecordSenior.init(count);
     }
