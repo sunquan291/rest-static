@@ -7,7 +7,7 @@
 ```xml
 <dependency>
     <groupId>com.zte.sdn.oscp</groupId>
-    <artifactId>rest-statics-spring-boot-stater</artifactId>
+    <artifactId>rest-statics-spring-boot-starter</artifactId>
     <version>2.4.4</version>
 </dependency>
 ```
