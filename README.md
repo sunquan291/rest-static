@@ -17,6 +17,7 @@
 ```yaml
 rest:
   statics:
+    enable: true #默认使用该starter
     skip-urls: #设置需要过滤不进行信息统计的URL
       - /bechmark/*
     count: 9 #设置滚动记录信息的条目数,会自动转为2指数数目,默认1024
